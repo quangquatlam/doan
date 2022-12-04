@@ -6,6 +6,8 @@ from scipy.stats import norm
 
 stock_ticker_close = 'Close'
 dayOfYear = 252
+alpha_95 = 0.05
+alpha_99 = 0.01
 
 def getStockMarketData(symbol , startDate, endDate):
   return stock_historical_data(symbol= symbol, start_date = startDate, end_date = endDate)
@@ -14,18 +16,27 @@ def get_stockmarket_data_realtime(symbol, startDate):
   endDate = dt.datetime.now().strftime("%Y-%m-%d")
   return stock_historical_data(symbol=symbol, start_date = startDate, end_date = endDate)
 
-def get_stockmarket_data_attribute(startDate, atribute, list = []):
+def get_stockmarket_data_attribute(startDate, attribute, list = []):
   result = {}
   for item in list :
-    data = get_stockmarket_data_realtime(symbol=item, startDate = startDate)[atribute].values
+    data = get_stockmarket_data_realtime(symbol=item, startDate = startDate)[attribute].values
     result[item]= data
   return result
 
-def VaR():
-  ticker = ['VCB', 'VIC', 'VHM', 'GAS']
-  weights = np.array([.25, .3, .15, .3])
+def VaR(ticker, startDate):
+  ticker = ['VCB']
+  data_attribute_close = get_stockmarket_data_attribute(startDate, stock_ticker_close, ticker)
+  df = pd.DataFrame(data_attribute_close)
+  returns = df.pct_change()
+  avg_rets = returns.mean()
+  std_dev = returns.std()
+  return norm.ppf(0.05, avg_rets, std_dev)
+
+
+def VaRList(startDate = '', listTickers = [], listWeights = []):
+  listWeights = np.array(listWeights)
   initial_investment = 1000000
-  data_attribute_close = get_stockmarket_data_attribute('2022-10-2', stock_ticker_close, ticker)
+  data_attribute_close = get_stockmarket_data_attribute(startDate, stock_ticker_close, listTickers)
   df = pd.DataFrame(data_attribute_close)
   returns = df.pct_change()
   returns.tail()
@@ -34,9 +45,9 @@ def VaR():
 
   avg_rets = returns.mean()
 
-  port_mean = avg_rets.dot(weights)
+  port_mean = avg_rets.dot(listWeights)
 
-  port_stdev = np.sqrt(weights.T.dot(cov_matrix).dot(weights))
+  port_stdev = np.sqrt(listWeights.T.dot(cov_matrix).dot(listWeights))
 
   mean_investment = (1 + port_mean) * initial_investment
 
@@ -46,10 +57,9 @@ def VaR():
 
   cutoff1 = norm.ppf(conf_level1, mean_investment, stdev_investment)
 
-  return (initial_investment - cutoff1)/initial_investment
+  print((initial_investment - cutoff1)/initial_investment)
 
-# a = VaR()
-# print(a)
+  return (initial_investment - cutoff1)/initial_investment
 
 def Volatility():
   stockList = ['VCB']
@@ -61,10 +71,11 @@ def Volatility():
   returns = df.pct_change()
   returns.shift(1)
   return (returns.std()*dayOfYear**0.5)*100
-a = Volatility()
-print(a.values)
+
 
 def getListTicker():
   listTicker = listing_companies()
   return np.array(listTicker['ticker'])
+
+
 
