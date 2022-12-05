@@ -23,14 +23,17 @@ def get_stockmarket_data_attribute(startDate, attribute, list = []):
     result[item]= data
   return result
 
-def VaR(ticker, startDate):
-  ticker = ['VCB']
-  data_attribute_close = get_stockmarket_data_attribute(startDate, stock_ticker_close, ticker)
+def get_single_stockmarket_data_attribute(startDate, attribute, item):
+  data = get_stockmarket_data_realtime(symbol=item, startDate = startDate)[attribute].values
+  return data
+
+def VaR( startDate='', alpha = 0.05, ticker =''):
+  data_attribute_close = get_single_stockmarket_data_attribute(startDate, stock_ticker_close, ticker)
   df = pd.DataFrame(data_attribute_close)
   returns = df.pct_change()
   avg_rets = returns.mean()
   std_dev = returns.std()
-  return norm.ppf(0.05, avg_rets, std_dev)
+  return norm.ppf(alpha, avg_rets, std_dev)
 
 
 def VaRList(startDate = '', listTickers = [], listWeights = []):
@@ -56,8 +59,6 @@ def VaRList(startDate = '', listTickers = [], listWeights = []):
   conf_level1 = 0.05
 
   cutoff1 = norm.ppf(conf_level1, mean_investment, stdev_investment)
-
-  print((initial_investment - cutoff1)/initial_investment)
 
   return (initial_investment - cutoff1)/initial_investment
 

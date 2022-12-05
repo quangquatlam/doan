@@ -151,6 +151,14 @@ def quantitative():
     if status:
         labelVaRTotal = Label(root, text=VaRList(dateTimeStart, stocks, listWeight),font=("Quicksand",12),bg='#FFB6C1')
         labelVaRTotal.place(x=100, y=330)
+
+        for stock in stocks:
+            stock = str(stock)
+            values = []
+            values.append(stock)
+            values.append(VaR(dateTimeStart, 0.05, stock))
+            values.append(VaR(dateTimeStart, 0.01, stock))
+            tree.insert('', END, values= values)
     
 
     
