@@ -59,23 +59,20 @@ labelDateStart.place(x = 680 , y = 100)
 dateEntryStart= DateEntry(root,width=20, date_pattern='y/mm/dd')
 dateEntryStart.place(x = 800 , y = 100)
 
-labelVaRTotal = Label(root, text="VaR",font=("Quicksand",12),bg='#FFB6C1')
+labelVaRTotal = Label(root, text="VaR95",font=("Quicksand",12),bg='#FFB6C1')
 labelVaRTotal.place(x=40, y=330)
 
+labelVaRTotal = Label(root, text="VaR99",font=("Quicksand",12),bg='#FFB6C1')
+labelVaRTotal.place(x=40, y=360)
+
 labelListMeasure = Label(root, text="Bảng giá trị",font=("Quicksand",12),bg='#FFB6C1')
-labelListMeasure.place(x=40,y=360)
+labelListMeasure.place(x=40,y=400)
 
 comboboxStockSearch = ttk.Combobox(root,width=20)
 comboboxStockSearch.place(x = 680 , y =270)
 
 tree = ttk.Treeview(root, columns=("","Var95", "Var99", "Volatility"),show="headings",height=5)
-tree.place(x=40,y=400)
-tree.column("#2", anchor=CENTER)
-tree.heading("#2",text="VaR95")
-tree.column("#3", anchor=CENTER)
-tree.heading("#3",text="VaR99")
-tree.column("#4", anchor=CENTER)
-tree.heading("#4",text="Volatility")
+tree.place(x=40,y=430)
 
 selected = StringVar()
 
@@ -86,7 +83,7 @@ def selectedFunc():
     if (selected.get() == 'HSX'):
         data = pd.read_csv('data/HSX.csv')
     
-    listStock = data.iloc[:,0].tolist()
+    listStock = data['Ticker'].tolist()
 
     comboboxStockA['values'] = listStock
     comboboxStockA.current(0)
@@ -149,8 +146,14 @@ def quantitative():
         return
 
     if status:
-        labelVaRTotal = Label(root, text=VaRList(dateTimeStart, stocks, listWeight),font=("Quicksand",12),bg='#FFB6C1')
-        labelVaRTotal.place(x=100, y=330)
+        labelVaRTotal95 = Label(root, text=VaRList(dateTimeStart, stocks, listWeight),font=("Quicksand",12),bg='#FFB6C1')
+        labelVaRTotal95.place(x=100, y=330)
+
+        labelVaRTotal99 = Label(root, text=VaRList(dateTimeStart, stocks, listWeight),font=("Quicksand",12),bg='#FFB6C1')
+        labelVaRTotal99.place(x=100, y=360)
+
+        for item in tree.get_children():
+            tree.delete(item)
 
         for stock in stocks:
             stock = str(stock)
@@ -158,6 +161,13 @@ def quantitative():
             values.append(stock)
             values.append(VaR(dateTimeStart, 0.05, stock))
             values.append(VaR(dateTimeStart, 0.01, stock))
+            values.append(Volatility(stock))
+            tree.column("#2", anchor=CENTER)
+            tree.heading("#2",text="VaR95")
+            tree.column("#3", anchor=CENTER)
+            tree.heading("#3",text="VaR99")
+            tree.column("#4", anchor=CENTER)
+            tree.heading("#4",text="Volatility")
             tree.insert('', END, values= values)
     
 

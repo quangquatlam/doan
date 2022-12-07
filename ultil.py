@@ -40,10 +40,9 @@ def VaRList(startDate = '', listTickers = [], listWeights = []):
   listWeights = np.array(listWeights)
   initial_investment = 1000000
   data_attribute_close = get_stockmarket_data_attribute(startDate, stock_ticker_close, listTickers)
-  df = pd.DataFrame(data_attribute_close)
+  df = pd.DataFrame.from_dict(data_attribute_close)
   returns = df.pct_change()
   returns.tail()
-
   cov_matrix = returns.cov()
 
   avg_rets = returns.mean()
@@ -60,18 +59,19 @@ def VaRList(startDate = '', listTickers = [], listWeights = []):
 
   cutoff1 = norm.ppf(conf_level1, mean_investment, stdev_investment)
 
-  return (initial_investment - cutoff1)/initial_investment
+  return float((initial_investment - cutoff1)/initial_investment)
 
-def Volatility():
-  stockList = ['VCB']
+def Volatility(ticker = ''):
+  stock = []
+  stock.append(ticker)
   endDate = dt.datetime.now()
   startDate = endDate - dt.timedelta(days = 365)
   startDate = startDate.strftime("%Y-%m-%d")
-  dataAttributeClose = get_stockmarket_data_attribute(startDate, stock_ticker_close, stockList)
-  df = pd.DataFrame(dataAttributeClose)
+  dataAttributeClose = get_stockmarket_data_attribute(str(startDate), stock_ticker_close, stock)
+  df = pd.DataFrame.from_dict(dataAttributeClose)
   returns = df.pct_change()
   returns.shift(1)
-  return (returns.std()*dayOfYear**0.5)*100
+  return float((returns.std()))
 
 
 def getListTicker():
