@@ -3,6 +3,7 @@ import datetime as dt
 import pandas as pd
 import numpy as np
 from scipy.stats import norm
+import plotly.graph_objects as go
 
 stock_ticker_close = 'Close'
 dayOfYear = 252
@@ -71,12 +72,14 @@ def Volatility(ticker = ''):
   df = pd.DataFrame.from_dict(dataAttributeClose)
   returns = df.pct_change()
   returns.shift(1)
-  return float((returns.std()))
+  return float(returns.std())
 
+def Draw():
+  data = getStockMarketData('ACB', '2021-01-05', '2022-01-05')
+  fig = go.Figure(data= go.Scatter(x = data['TradingDate'], y= data['Close'], mode='lines+markers'))
+  fig.show()
 
-def getListTicker():
-  listTicker = listing_companies()
-  return np.array(listTicker['ticker'])
+Draw()
 
 
 
