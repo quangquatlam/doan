@@ -197,11 +197,14 @@ def selectedFunc():
     comboboxStockSearch['values'] = listStock
     comboboxStockSearch.current(0)
 
+labelSelectMarket = Label(tab2, text="Chọn sàn giao dịch",font=("Quicksand",12))
+labelSelectMarket.place(x=50,y=50)
+
 radioExchangeHSX = ttk.Radiobutton(tab2, text="Sàn HSX", width=30,variable= selected ,value='HSX', command=selectedFunc)
-radioExchangeHSX.place(x=100, y= 50)
+radioExchangeHSX.place(x=400, y= 50)
 
 radioExchangeHNX = ttk.Radiobutton(tab2, text="Sàn HNX", width=30, variable= selected, value='HNX', command=selectedFunc)
-radioExchangeHNX.place(x=200, y= 50)
+radioExchangeHNX.place(x=600, y= 50)
 
 def quantitative():
     stockTickerA = comboboxStockA.get()
@@ -313,32 +316,48 @@ def searchVaR():
         tree.heading("#6")
         tree.insert('', END, values= values)
 
+def viewChartVar():
+    stockTickerA = comboboxStockA.get()
+    stockTickerB = comboboxStockB.get()
+    stockTickerC = comboboxStockC.get()
+    stockTickerD = comboboxStockD.get()
+
+    stocks = [stockTickerA, stockTickerB, stockTickerC, stockTickerD]
+
+    dateTimeStart = dateEntryStart.get().replace("/","-")
+    status = True
+
+    currentTime = dt.datetime.now().strftime("%Y-%m-%d")
+
+    if (currentTime <= dateTimeStart):
+        messagebox.showerror('Error','Vui lòng điền đầy đủ thông tin ngày bắt đầu')
+        status = False
+        return
+    
+    if (status):
+        viewChartVarDraw(stocks,dateTimeStart)
+
+
+btnResultTab2 = Button(tab2,text='Định lượng',foreground="blue", padx=5,command=quantitative).place(x=40, y=270)
+btnSearch = Button(tab2,text='Tìm kiếm',foreground="blue",padx=5,command=searchVaR).place(x = 680 , y =300)
+btnViewChart = Button(tab2,text='Biểu đồ biến động',foreground="blue",padx=5,command=viewChartVar).place(x = 140 , y =270)
+
 ##################################################################### tab3
 
-labelTitleTab2=Label(tab3,text="Hệ thống định lượng rủi ro thị trường chứng khoán Việt Nam",font = ("Quicksand", 17),foreground="black")
-labelTitleTab2.pack(side = "top")
+labelTitleTab3 =Label(tab3,text="Hệ thống định lượng rủi ro thị trường chứng khoán Việt Nam",font = ("Quicksand", 17),foreground="black")
+labelTitleTab3.pack(side = "top")
 
 def selectedFunc2(): 
     data2 = pd.DataFrame()
-    if (selected2.get() == 'HNX'):
+    if (selected3.get() == 'HNX'):
         data2 = pd.read_csv('data/HNX.csv')
-    if (selected2.get() == 'HSX'):
+    if (selected3.get() == 'HSX'):
         data2 = pd.read_csv('data/HSX.csv')
     
     listStock2 = data2['Ticker'].tolist()
-    comboboxStockSearchTab2['values'] = listStock2
-    comboboxStockSearchTab2.current(0)
+    comboboxStockSearchTab3['values'] = listStock2
+    comboboxStockSearchTab3.current(0)
 
-selected2 = StringVar()
-
-radioExchangeHSXTab2 = ttk.Radiobutton(tab3, text="Sàn HSX", width=30,variable= selected2 ,value='HSX', command=selectedFunc2)
-radioExchangeHSXTab2.place(x=100, y= 50)
-
-radioExchangeHNXTab2 = ttk.Radiobutton(tab3, text="Sàn HNX", width=30, variable= selected2, value='HNX', command=selectedFunc2)
-radioExchangeHNXTab2.place(x=200, y= 50)
-
-comboboxStockSearchTab2 = ttk.Combobox(tab3,width=20)
-comboboxStockSearchTab2.place(x = 680 , y =270)
 
 tree2 = ttk.Treeview(tab3, columns=("","Volatility Moth", "Volatility Year"),show="headings",height=5)
 tree2.place(x=40,y=430)
@@ -364,13 +383,28 @@ radioExchangeHSXTab3.place(x=100, y= 50)
 radioExchangeHNXTab3 = ttk.Radiobutton(tab3, text="Sàn HNX", width=30, variable= selected3, value='HNX', command=selectedFunc3)
 radioExchangeHNXTab3.place(x=200, y= 50)
 
+labelStockMarket = Label(tab3, text="Mã Index",font=("Quicksand",12))
+labelStockMarket.place(x=100, y=150)
+
 comboboxStockSearchTab3 = ttk.Combobox(tab3,width=20)
-comboboxStockSearchTab3.place(x = 680 , y =270)
+comboboxStockSearchTab3.place(x = 250 , y =150)
+
+labelDateStartTab3=Label(tab3,text="Từ ngày",font=("Quicksand",12))
+labelDateStartTab3.place(x = 100 , y = 200)
+dateEntryStartTab3= DateEntry(tab3,width=20, date_pattern='y/mm/dd')
+dateEntryStartTab3.place(x = 250 , y = 200)
+
+labelDateEndTab3=Label(tab3,text="Đến ngày",font=("Quicksand",12))
+labelDateEndTab3.place(x = 100 , y = 250)
+dateEntryEndTab3= DateEntry(tab3,width=20, date_pattern='y/mm/dd')
+dateEntryEndTab3.place(x = 250 , y = 250)
 
 ######################################## Function
 
 def searchVolatility():
-    stockTickerVola = comboboxStockSearchTab2.get()
+    stockTickerVola = comboboxStockSearchTab3.get()
+    dateTimeStartTab3 = dateEntryStartTab3.get().replace("/","-")
+    dateTimeEndTab3 = dateEntryEndTab3.get().replace("/","-")
 
     status= True
     
@@ -379,22 +413,30 @@ def searchVolatility():
         status = False
         return
     
+    if (dateTimeStartTab3 >= dateTimeEndTab3):
+        messagebox.showerror('Error','Ngày bắt đầu và kết thúc không hợp lệ')
+        status = False
+        return
+    
+    currentTime = dt.datetime.now().strftime("%Y-%m-%d")
+
+    if (currentTime <= dateTimeEndTab3):
+        messagebox.showerror('Error','Ngày kết thúc không hợp lệ')
+        status = False
+        return
+    
     if (status):
         values = []
         values.append(stockTickerVola)
-        values.append(Volatility(stockTickerVola))
-        values.append(Volatility(stockTickerVola))
+        values.append(Volatility(stockTickerVola,dateTimeStartTab3,dateTimeEndTab3,20 ))
+        values.append(Volatility(stockTickerVola,dateTimeStartTab3,dateTimeEndTab3,252 ))
         tree2.column("#2", anchor=CENTER)
         tree2.heading("#2",text="Volatility Moth")
         tree2.column("#3", anchor=CENTER)
         tree2.heading("#3",text="Volatility Year")
         tree2.insert('', END, values= values)
 
-#btn tab2
-btnResult = Button(tab2,text='Định lượng',foreground="blue", padx=5,command=quantitative).place(x=40, y=270)
-btnSearch = Button(tab2,text='Tìm kiếm',foreground="blue",padx=5,command=searchVaR).place(x = 680 , y =300)
-
 #bn tab3
-btnSearchVola = Button(tab3,text='Tìm kiếm',foreground="blue",padx=5,command=searchVolatility).place(x = 840 , y = 270)
+btnSearchVola = Button(tab3,text='Tìm kiếm',foreground="blue",padx=5,command=searchVolatility).place(x = 100 , y = 300)
 
 mainloop()

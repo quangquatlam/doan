@@ -81,6 +81,16 @@ def drawCharVar(startDate='', ticker =''):
             'Returns < VaR'])
   plt.show()
 
+def viewChartVarDraw(stocks=[], startDate=''):
+  df = pd.DataFrame()
+  listdata = get_stockmarket_data_realtime(symbol=stocks[0], startDate = startDate)
+  df = pd.DataFrame(index=listdata['TradingDate'], columns=stocks)
+  for item in stocks :
+    listdata = get_stockmarket_data_realtime(symbol=item, startDate = startDate)
+    df[item] = listdata['Close'].to_list()
+  df.plot()
+  plt.show()
+
 def VaRList(startDate = '', listTickers = [], listWeights = [], alpha = 0.05):
   listWeights = np.array(listWeights)
   initial_investment = 1000000
@@ -136,17 +146,38 @@ def CVaRList(startDate = '', listTickers = [], listWeights = []):
 
   return float((initial_investment - cutoff1)/initial_investment)
 
-def Volatility(ticker = ''):
-  stock = []
-  stock.append(ticker)
-  endDate = dt.datetime.now()
-  startDate = endDate - dt.timedelta(days0 = 365)
-  startDate = startDate.strftime("%Y-%m-%d")
-  dataAttributeClose = get_stockmarket_data_attribute(str(startDate), stock_ticker_close, stock)
-  df = pd.DataFrame.from_dict(dataAttributeClose)
+def Volatility(ticker= '', startDate= '', endDate = '', day=0):
+  values = getStockMarketData(ticker , startDate, endDate)['Close'].values
+  df = pd.DataFrame.from_dict(values)
   returns = df.pct_change()
   returns.shift(1)
-  return float(returns.std())
+  returns = returns.std()
+  returns = returns*np.sqrt(day)
+  return float(round(returns*100,2))
+  
+
+
+def VolatilityYear():
+  stocks=[]
+  data3 = pd.read_csv('data/HNX.csv')
+  ticker = data3['Ticker'].tolist()
+  stocks.append(ticker)
+  endDate = dt.datetime.now() - dt.timedelta(days=3)
+  startDate = endDate - dt.timedelta(days = 365)
+  startDate = startDate.strftime("%Y-%m-%d")
+  for stock in stocks:
+    dataAttributeClose = {}
+    dataAttributeClose = get_stockmarket_data_attribute('2022-11-10', stock_ticker_close, stock)
+    print(dataAttributeClose)
+    # df = pd.DataFrame.from_dict(dataAttributeClose)
+    # returns = df.pct_change()
+    # returns.shift(1)
+    # returns = returns.std()
+    # returns = returns*np.sqrt(252)
+    # print(returns)
+  # return float(round(returns*100,2))
+
+# VolatilityYear()
 
 def Draw(ticker='', dateTimeStart = '', dateTimeEnd = ''):
   data = getStockMarketData(ticker, dateTimeStart, dateTimeEnd)
