@@ -9,17 +9,19 @@ tabControl = ttk.Notebook(root)
 tab1 = ttk.Frame(tabControl)
 tab2 = ttk.Frame(tabControl)
 tab3 = ttk.Frame(tabControl)
+tab4 = ttk.Frame(tabControl)
 
 style = ttk.Style(tabControl)
 
 root.title("Hệ thống định lượng rủi ro thị trường chứng khoán Việt Nam")
 root.configure(bg='#FFB6C1')
-root.geometry("1024x720")
+root.geometry("1200x720")
 
 
 tabControl.add(tab1, text='Biểu đồ biến động')
-tabControl.add(tab2, text='Thước đo VaR')
-tabControl.add(tab3, text='Thước đo Volatility')
+tabControl.add(tab2, text="Bảng thông số")
+tabControl.add(tab3, text='Thước đo VaR')
+tabControl.add(tab4, text='Thước đo Volatility')
 tabControl.pack(expand=1, fill='both')
 
 #tab1
@@ -98,76 +100,129 @@ def viewChart():
 #btn tab1
 btnViewChart = Button(tab1,text='Xem biểu đồ',foreground="blue",padx=5,command=viewChart).place(x = 100 , y = 320)
 
-#########################tab2
 
-labelTitle2=Label(tab2,text="Hệ thống định lượng rủi ro thị trường chứng khoán Việt Nam",font = ("Quicksand", 17),foreground="black")
-labelTitle2.pack(side = "top")
+#tab2
+lb_title_tab2=Label(tab2,text="Hệ thống định lượng rủi ro thị trường chứng khoán Việt Nam",font = ("Quicksand", 17),foreground="black")
+lb_title_tab2.pack(side = "top")
 
-labelTickerStockA = Label(tab2,text="Mã Index A",font=("Quicksand",12))
+lb_select_tab2 = Label(tab2,text="Vui lòng chọn sàn giao dịch",font=("Quicksand",12))
+lb_select_tab2.place(x = 100 , y = 100)
+
+lb_sort_by = Label(tab2,text="Sắp xếp theo",font=("Quicksand",12))
+lb_sort_by.place(x = 100 , y = 160)
+cb_sort_by = ttk.Combobox(tab2,width=20)
+cb_sort_by.place(x = 250 , y = 160)
+cb_sort_by['values'] = ['Tăng dần', 'Giảm dần']
+cb_sort_by.current(0)
+
+lb_vali = Label(tab2,text="Chỉ số rủi ro",font=("Quicksand",12))
+lb_vali.place(x = 100 , y = 200)
+cb_vali = ttk.Combobox(tab2,width=20)
+cb_vali.place(x = 250 , y = 200)
+cb_vali['values'] = ['VaR95', 'VaR99', 'CVaR95', 'CVaR99', 'Volality']
+cb_vali.current(0)
+
+selectedtab2 = StringVar()
+
+rbHSXTab1 = ttk.Radiobutton(tab2, text="Sàn HSX", width=20,variable= selectedtab2 ,value='HSX')
+rbHSXTab1.place(x=400, y= 100)
+
+rbHNXTab1 = ttk.Radiobutton(tab2, text="Sàn HNX", width=20, variable= selectedtab2, value='HNX')
+rbHNXTab1.place(x=600, y= 100)
+
+treetab2 = ttk.Treeview(tab2, columns = ("","Value"), show = "headings", height = 10)
+treetab2.place(x=100,y=350)
+
+def viewtt():
+    status = True
+    market = selectedtab2.get()
+    sortBy = cb_sort_by.get()
+    stock = cb_vali.get()
+
+    if market == '' :
+        messagebox.showerror('Error','Vui lòng chọn sàn giao dịch')
+        status = False
+        return
+    if (status):
+        path = 'data/'+ stock + '_' + market +'.csv'
+        df = pd.read_csv(path)
+        print(df['Ticker'])
+        treetab2.insert('', END, values= df.values)
+        
+
+#btn tab1
+btnViewtt = Button(tab2,text='Xem thông số',foreground="blue",padx=5,command=viewtt).place(x = 100 , y = 250)
+
+#########################tab3
+
+labelTitle3=Label(tab3,text="Hệ thống định lượng rủi ro thị trường chứng khoán Việt Nam",font = ("Quicksand", 17),foreground="black")
+labelTitle3.pack(side = "top")
+
+labelTickerStockA = Label(tab3,text="Mã Index A",font=("Quicksand",12))
 labelTickerStockA.place(x = 40 , y = 100)
-comboboxStockA = ttk.Combobox(tab2,width=20)
+comboboxStockA = ttk.Combobox(tab3,width=20)
 comboboxStockA.place(x = 170 , y =100)
 
-labelTickerStockB = Label(tab2,text="Mã Index B",font=("Quicksand",12))
+labelTickerStockB = Label(tab3,text="Mã Index B",font=("Quicksand",12))
 labelTickerStockB.place(x = 40 , y = 140)
-comboboxStockB=ttk.Combobox(tab2,width=20)
+comboboxStockB=ttk.Combobox(tab3,width=20)
 comboboxStockB.place(x = 170 , y =140)
 
-labelTickerStockC=Label(tab2,text="Mã Index C",font=("Quicksand",12))
+labelTickerStockC=Label(tab3,text="Mã Index C",font=("Quicksand",12))
 labelTickerStockC.place(x = 40 , y = 180)
-comboboxStockC=ttk.Combobox(tab2,width=20)
+comboboxStockC=ttk.Combobox(tab3,width=20)
+comboboxStockC.place(x = 170 , y =180)
 
-labelTickerStockD = Label(tab2,text="Mã Index D",font=("Quicksand",12))
+labelTickerStockD = Label(tab3,text="Mã Index D",font=("Quicksand",12))
 labelTickerStockD.place(x = 40 , y = 220)
-comboboxStockD = ttk.Combobox(tab2,width=20)
+comboboxStockD = ttk.Combobox(tab3,width=20)
 comboboxStockD.place(x = 170 , y =220)
 
 # trong so
 
-labelWeightA = Label(tab2,text="Trọng số đầu tư A",font=("Quicksand",12))
-labelWeightA.place(x = 350 , y = 100)
-inputWeightA = Entry(tab2,width=20,borderwidth=2)
-inputWeightA.place(x = 520 , y = 100)
+labelWeightA = Label(tab3,text="Trọng số đầu tư A",font=("Quicksand",12))
+labelWeightA.place(x = 400 , y = 100)
+inputWeightA = Entry(tab3,width=20,borderwidth=2)
+inputWeightA.place(x = 530 , y = 100)
 
-labelWeightB=Label(tab2,text= "Trọng số đầu tư B",font=("Quicksand",12))
-labelWeightB.place(x = 350 , y = 140)
-inputWeightB = Entry(tab2,width=20,borderwidth=2)
-inputWeightB.place(x = 520 , y =140)
+labelWeightB=Label(tab3,text= "Trọng số đầu tư B",font=("Quicksand",12))
+labelWeightB.place(x = 400 , y = 140)
+inputWeightB = Entry(tab3,width=20,borderwidth=2)
+inputWeightB.place(x = 530 , y =140)
 
-labelWeightC=Label(tab2,text="Trọng số đầu tư C",font=("Quicksand",12))
-labelWeightC.place(x = 350 , y = 180)
-inputWeightC = Entry(tab2,width=20,borderwidth=2)
-inputWeightC.place(x = 520 , y =180)
-comboboxStockC.place(x = 170 , y =180)
+labelWeightC=Label(tab3,text="Trọng số đầu tư C",font=("Quicksand",12))
+labelWeightC.place(x = 400 , y = 180)
+inputWeightC = Entry(tab3,width=20,borderwidth=2)
+inputWeightC.place(x = 530 , y =180)
 
-labelWeightD = Label(tab2,text="Trọng số đầu tư D",font=("Quicksand",12))
-labelWeightD.place(x = 350 , y = 220)
-inputWeightD=Entry(tab2,width=20,borderwidth=2)
-inputWeightD.place(x = 520 , y = 220)
+labelWeightD = Label(tab3,text="Trọng số đầu tư D",font=("Quicksand",12))
+labelWeightD.place(x = 400 , y = 220)
+inputWeightD=Entry(tab3,width=20,borderwidth=2)
+inputWeightD.place(x = 530 , y = 220)
 
-labelDateStart=Label(tab2,text="Ngày bắt đầu",font=("Quicksand",12))
-labelDateStart.place(x = 680 , y = 100)
-dateEntryStart= DateEntry(tab2,width=20, date_pattern='y/mm/dd')
-dateEntryStart.place(x = 800 , y = 100)
+labelDateStart=Label(tab3,text="Ngày bắt đầu",font=("Quicksand",12))
+labelDateStart.place(x = 750 , y = 100)
+dateEntryStart= DateEntry(tab3,width=20, date_pattern='y/mm/dd')
+dateEntryStart.place(x = 850 , y = 100)
 
-labelVaRTotal = Label(tab2, text="VaR95",font=("Quicksand",12))
+labelVaRTotal = Label(tab3, text="VaR95",font=("Quicksand",12))
 labelVaRTotal.place(x=40, y=330)
 
-labelVaRTotal = Label(tab2, text="VaR99",font=("Quicksand",12))
+labelVaRTotal = Label(tab3, text="VaR99",font=("Quicksand",12))
 labelVaRTotal.place(x=40, y=360)
 
-labelListMeasure = Label(tab2, text="Bảng giá trị",font=("Quicksand",12))
+labelListMeasure = Label(tab3, text="Bảng giá trị",font=("Quicksand",12))
 labelListMeasure.place(x=40,y=400)
 
-comboboxStockSearch = ttk.Combobox(tab2,width=20)
-comboboxStockSearch.place(x = 680 , y =270)
+comboboxStockSearch = ttk.Combobox(tab3,width=20)
+comboboxStockSearch.place(x = 750 , y =270)
 
 def displayChart(e):
     rowSelected = tree.focus()
     values = tree.item(rowSelected, 'values')
     drawCharVar(values[5],values[0])
 
-tree = ttk.Treeview(tab2, columns=("","VaR95", "VaR99","CVaR95", "CVaR99", "Date"),show="headings",height=5)
+tree = ttk.Treeview(tab3, columns=("","VaR95", "VaR99","CVaR95", "CVaR99", "Date"),show="headings",height=5)
 tree.place(x=40,y=430)
 tree.bind('<Double-1>', displayChart)
 
@@ -197,13 +252,13 @@ def selectedFunc():
     comboboxStockSearch['values'] = listStock
     comboboxStockSearch.current(0)
 
-labelSelectMarket = Label(tab2, text="Chọn sàn giao dịch",font=("Quicksand",12))
+labelSelectMarket = Label(tab3, text="Chọn sàn giao dịch",font=("Quicksand",12))
 labelSelectMarket.place(x=50,y=50)
 
-radioExchangeHSX = ttk.Radiobutton(tab2, text="Sàn HSX", width=30,variable= selected ,value='HSX', command=selectedFunc)
+radioExchangeHSX = ttk.Radiobutton(tab3, text="Sàn HSX", width=30,variable= selected ,value='HSX', command=selectedFunc)
 radioExchangeHSX.place(x=400, y= 50)
 
-radioExchangeHNX = ttk.Radiobutton(tab2, text="Sàn HNX", width=30, variable= selected, value='HNX', command=selectedFunc)
+radioExchangeHNX = ttk.Radiobutton(tab3, text="Sàn HNX", width=30, variable= selected, value='HNX', command=selectedFunc)
 radioExchangeHNX.place(x=600, y= 50)
 
 def quantitative():
@@ -245,10 +300,10 @@ def quantitative():
         return
 
     if status:
-        labelVaRTotal95 = Label(tab2, text=VaRList(dateTimeStart, stocks, listWeight, 0.05),font=("Quicksand",12))
+        labelVaRTotal95 = Label(tab3, text=VaRList(dateTimeStart, stocks, listWeight, 0.05),font=("Quicksand",12))
         labelVaRTotal95.place(x=100, y=330)
 
-        labelVaRTotal99 = Label(tab2, text=VaRList(dateTimeStart, stocks, listWeight, 0.01),font=("Quicksand",12))
+        labelVaRTotal99 = Label(tab3, text=VaRList(dateTimeStart, stocks, listWeight, 0.01),font=("Quicksand",12))
         labelVaRTotal99.place(x=100, y=360)
 
         for item in tree.get_children():
@@ -338,14 +393,14 @@ def viewChartVar():
         viewChartVarDraw(stocks,dateTimeStart)
 
 
-btnResultTab2 = Button(tab2,text='Định lượng',foreground="blue", padx=5,command=quantitative).place(x=40, y=270)
-btnSearch = Button(tab2,text='Tìm kiếm',foreground="blue",padx=5,command=searchVaR).place(x = 680 , y =300)
-btnViewChart = Button(tab2,text='Biểu đồ biến động',foreground="blue",padx=5,command=viewChartVar).place(x = 140 , y =270)
+btnResultTab3 = Button(tab3,text='Định lượng',foreground="blue", padx=5,command=quantitative).place(x=40, y=270)
+btnSearch = Button(tab3,text='Tìm kiếm',foreground="blue",padx=5,command=searchVaR).place(x = 980 , y =265)
+btnViewChart = Button(tab3,text='Biểu đồ biến động',foreground="blue",padx=5,command=viewChartVar).place(x = 200 , y =270)
 
-##################################################################### tab3
+##################################################################### tab4
 
-labelTitleTab3 =Label(tab3,text="Hệ thống định lượng rủi ro thị trường chứng khoán Việt Nam",font = ("Quicksand", 17),foreground="black")
-labelTitleTab3.pack(side = "top")
+labelTitleTab4 =Label(tab4,text="Hệ thống định lượng rủi ro thị trường chứng khoán Việt Nam",font = ("Quicksand", 17),foreground="black")
+labelTitleTab4.pack(side = "top")
 
 def selectedFunc2(): 
     data2 = pd.DataFrame()
@@ -355,11 +410,11 @@ def selectedFunc2():
         data2 = pd.read_csv('data/HSX.csv')
     
     listStock2 = data2['Ticker'].tolist()
-    comboboxStockSearchTab3['values'] = listStock2
-    comboboxStockSearchTab3.current(0)
+    comboboxStockSearchTab4['values'] = listStock2
+    comboboxStockSearchTab4.current(0)
 
 
-tree2 = ttk.Treeview(tab3, columns=("","Volatility Moth", "Volatility Year"),show="headings",height=5)
+tree2 = ttk.Treeview(tab4, columns=("","Volatility Moth", "Volatility Year"),show="headings",height=5)
 tree2.place(x=40,y=430)
 
 
@@ -372,37 +427,37 @@ def selectedFunc3():
         data3 = pd.read_csv('data/HSX.csv')
     
     listStock3 = data3['Ticker'].tolist()
-    comboboxStockSearchTab3['values'] = listStock3
-    comboboxStockSearchTab3.current(0)
+    comboboxStockSearchTab4['values'] = listStock3
+    comboboxStockSearchTab4.current(0)
 
 selected3 = StringVar()
 
-radioExchangeHSXTab3 = ttk.Radiobutton(tab3, text="Sàn HSX", width=30,variable= selected3 ,value='HSX', command=selectedFunc3)
+radioExchangeHSXTab3 = ttk.Radiobutton(tab4, text="Sàn HSX", width=30,variable= selected3 ,value='HSX', command=selectedFunc3)
 radioExchangeHSXTab3.place(x=100, y= 50)
 
-radioExchangeHNXTab3 = ttk.Radiobutton(tab3, text="Sàn HNX", width=30, variable= selected3, value='HNX', command=selectedFunc3)
+radioExchangeHNXTab3 = ttk.Radiobutton(tab4, text="Sàn HNX", width=30, variable= selected3, value='HNX', command=selectedFunc3)
 radioExchangeHNXTab3.place(x=200, y= 50)
 
-labelStockMarket = Label(tab3, text="Mã Index",font=("Quicksand",12))
+labelStockMarket = Label(tab4, text="Mã Index",font=("Quicksand",12))
 labelStockMarket.place(x=100, y=150)
 
-comboboxStockSearchTab3 = ttk.Combobox(tab3,width=20)
-comboboxStockSearchTab3.place(x = 250 , y =150)
+comboboxStockSearchTab4 = ttk.Combobox(tab4,width=20)
+comboboxStockSearchTab4.place(x = 250 , y =150)
 
-labelDateStartTab3=Label(tab3,text="Từ ngày",font=("Quicksand",12))
+labelDateStartTab3=Label(tab4,text="Từ ngày",font=("Quicksand",12))
 labelDateStartTab3.place(x = 100 , y = 200)
-dateEntryStartTab3= DateEntry(tab3,width=20, date_pattern='y/mm/dd')
+dateEntryStartTab3= DateEntry(tab4,width=20, date_pattern='y/mm/dd')
 dateEntryStartTab3.place(x = 250 , y = 200)
 
-labelDateEndTab3=Label(tab3,text="Đến ngày",font=("Quicksand",12))
+labelDateEndTab3=Label(tab4,text="Đến ngày",font=("Quicksand",12))
 labelDateEndTab3.place(x = 100 , y = 250)
-dateEntryEndTab3= DateEntry(tab3,width=20, date_pattern='y/mm/dd')
+dateEntryEndTab3= DateEntry(tab4,width=20, date_pattern='y/mm/dd')
 dateEntryEndTab3.place(x = 250 , y = 250)
 
 ######################################## Function
 
 def searchVolatility():
-    stockTickerVola = comboboxStockSearchTab3.get()
+    stockTickerVola = comboboxStockSearchTab4.get()
     dateTimeStartTab3 = dateEntryStartTab3.get().replace("/","-")
     dateTimeEndTab3 = dateEntryEndTab3.get().replace("/","-")
 
@@ -437,6 +492,6 @@ def searchVolatility():
         tree2.insert('', END, values= values)
 
 #bn tab3
-btnSearchVola = Button(tab3,text='Tìm kiếm',foreground="blue",padx=5,command=searchVolatility).place(x = 100 , y = 300)
+btnSearchVola = Button(tab4,text='Tìm kiếm',foreground="blue",padx=5,command=searchVolatility).place(x = 100 , y = 300)
 
 mainloop()

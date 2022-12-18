@@ -97,7 +97,7 @@ def VaRList(startDate = '', listTickers = [], listWeights = [], alpha = 0.05):
   data_attribute_close = get_stockmarket_data_attribute(startDate, stock_ticker_close, listTickers)
   df = pd.DataFrame.from_dict(data_attribute_close)
   returns = df.pct_change()
-  returns.tail()
+  returns = returns.tail()
   cov_matrix = returns.cov()
 
   avg_rets = returns.mean()
@@ -125,7 +125,7 @@ def CVaRList(startDate = '', listTickers = [], listWeights = []):
   data_attribute_close = get_stockmarket_data_attribute(startDate, stock_ticker_close, listTickers)
   df = pd.DataFrame.from_dict(data_attribute_close)
   returns = df.pct_change()
-  returns.tail()
+  returns = returns.tail()
   cov_matrix = returns.cov()
 
   avg_rets = returns.mean()
@@ -150,7 +150,7 @@ def Volatility(ticker= '', startDate= '', endDate = '', day=0):
   values = getStockMarketData(ticker , startDate, endDate)['Close'].values
   df = pd.DataFrame.from_dict(values)
   returns = df.pct_change()
-  returns.shift(1)
+  returns = returns.shift(1)
   returns = returns.std()
   returns = returns*np.sqrt(day)
   return float(round(returns*100,2))
@@ -196,5 +196,120 @@ def Draw(ticker='', dateTimeStart = '', dateTimeEnd = ''):
   fig.update_layout(title={ 'text': 'Đồ thị của', 'x': 0.5})
   fig.show()
 
+#allVar(95)
+def calculateAllHNXVar95():
+  listData = pd.read_csv('data/HNX.csv')
+  dic_varAll = {}
+  for data in listData['Ticker'].values:
+    kq = VaRHistorical('2021-10-10', 0.05, data)
+    dic_varAll[data] = kq
+  df = pd.DataFrame(list(dic_varAll.items()), columns=['Ticker', 'VaR95'])
+  df = df.sort_values(by=['VaR95'],ascending=False)
+  df = df.reset_index(drop=True)
+  df.to_csv('data/VaR95_HNX.csv')
 
+def calculateAllHSXVar95():
+  listData = pd.read_csv('data/HSX.csv')
+  dic_varAll = {}
+  for data in listData['Ticker'].values:
+    kq = VaRHistorical('2021-10-10', 0.05, data)
+    dic_varAll[data] = kq
+  df = pd.DataFrame(list(dic_varAll.items()), columns=['Ticker', 'VaR95'])
+  df = df.sort_values(by=['VaR95'],ascending=False)
+  df = df.reset_index(drop=True)
+  df.to_csv('data/VaR95_HSX.csv')
 
+#allVar(99)
+def calculateAllHNXVar99():
+  listData = pd.read_csv('data/HNX.csv')
+  dic_varAll = {}
+  for data in listData['Ticker'].values:
+    kq = VaRHistorical('2021-10-10', 0.01, data)
+    dic_varAll[data] = kq
+  df = pd.DataFrame(list(dic_varAll.items()), columns=['Ticker', 'VaR99'])
+  df = df.sort_values(by=['VaR99'],ascending=False)
+  df = df.reset_index(drop=True)
+  df.to_csv('data/VaR99_HNX.csv')
+
+def calculateAllHSXVar99():
+  listData = pd.read_csv('data/HSX.csv')
+  dic_varAll = {}
+  for data in listData['Ticker'].values:
+    kq = VaRHistorical('2021-10-10', 0.01, data)
+    dic_varAll[data] = kq
+  df = pd.DataFrame(list(dic_varAll.items()), columns=['Ticker', 'VaR99'])
+  df = df.sort_values(by=['VaR99'],ascending=False)
+  df = df.reset_index(drop=True)
+  df.to_csv('data/VaR99_HSX.csv')
+
+#all CVaR(95):
+def calculateAllHNXCVar95():
+  listData = pd.read_csv('data/HNX.csv')
+  dic_varAll = {}
+  for data in listData['Ticker'].values:
+    kq = CVaRHistorical('2021-10-10', 0.05, data)
+    dic_varAll[data] = kq
+  df = pd.DataFrame(list(dic_varAll.items()), columns=['Ticker', 'CVaR95'])
+  df = df.sort_values(by=['CVaR95'],ascending=False)
+  df = df.reset_index(drop=True)
+  df.to_csv('data/CVaR95_HNX.csv')
+
+def calculateAllHSXCVar95():
+  listData = pd.read_csv('data/HSX.csv')
+  dic_varAll = {}
+  for data in listData['Ticker'].values:
+    kq = CVaRHistorical('2021-10-10', 0.05, data)
+    dic_varAll[data] = kq
+  df = pd.DataFrame(list(dic_varAll.items()), columns=['Ticker', 'CVaR95'])
+  df = df.sort_values(by=['CVaR95'],ascending=False)
+  df = df.reset_index(drop=True)
+  df.to_csv('data/CVaR95_HSX.csv')
+
+def calculateAllHNXCVar99():
+  listData = pd.read_csv('data/HNX.csv')
+  dic_varAll = {}
+  for data in listData['Ticker'].values:
+    kq = CVaRHistorical('2021-10-10', 0.01, data)
+    dic_varAll[data] = kq
+  df = pd.DataFrame(list(dic_varAll.items()), columns=['Ticker', 'CVaR99'])
+  df = df.sort_values(by=['CVaR99'],ascending=False)
+  df = df.reset_index(drop=True)
+  df.to_csv('data/CVaR99_HNX.csv')
+
+def calculateAllHSXCVar99():
+  listData = pd.read_csv('data/HSX.csv')
+  dic_varAll = {}
+  for data in listData['Ticker'].values:
+    kq = CVaRHistorical('2021-10-10', 0.01, data)
+    dic_varAll[data] = kq
+  df = pd.DataFrame(list(dic_varAll.items()), columns=['Ticker', 'CVaR99'])
+  df = df.sort_values(by=['CVaR99'],ascending=False)
+  df = df.reset_index(drop=True)
+  df.to_csv('data/CVaR99_HSX.csv')
+# calculateAllHSXCVar99()
+
+def calculateAllHSXVolality():
+  listData = pd.read_csv('data/HSX.csv')
+  dic_varAll = {}
+  currentTime = dt.datetime.now().strftime("%Y-%m-%d")
+  for data in listData['Ticker'].values:
+    kq = Volatility(data, '2021-10-10','2022-10-10',252)
+    dic_varAll[data] = kq
+  df = pd.DataFrame(list(dic_varAll.items()), columns=['Ticker', 'Volality'])
+  df = df.sort_values(by=['Volality'],ascending=False)
+  df = df.reset_index(drop=True)
+  df.to_csv('data/HSX_volality.csv')
+# calculateAllHSXVolality()
+
+def calculateAllHNXVolality():
+  listData = pd.read_csv('data/HNX.csv')
+  dic_varAll = {}
+  currentTime = dt.datetime.now().strftime("%Y-%m-%d")
+  for data in listData['Ticker'].values:
+    kq = Volatility(data, '2021-10-10','2022-10-10',252)
+    dic_varAll[data] = kq
+  df = pd.DataFrame(list(dic_varAll.items()), columns=['Ticker', 'Volality'])
+  df = df.sort_values(by=['Volality'],ascending=False)
+  df = df.reset_index(drop=True)
+  df.to_csv('data/HNX_volality.csv')
+# calculateAllHNXVolality()
