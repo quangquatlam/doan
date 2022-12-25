@@ -119,38 +119,11 @@ def VaRList(startDate = '', listTickers = [], listWeights = [], alpha = 0.05):
   var = round(var,2)
   return var
 
-def CVaRList(startDate = '', listTickers = [], listWeights = []):
-  listWeights = np.array(listWeights)
-  initial_investment = 1000000
-  data_attribute_close = get_stockmarket_data_attribute(startDate, stock_ticker_close, listTickers)
-  df = pd.DataFrame.from_dict(data_attribute_close)
-  returns = df.pct_change()
-  returns = returns.tail()
-  cov_matrix = returns.cov()
-
-  avg_rets = returns.mean()
-
-  port_mean = avg_rets.dot(listWeights)
-
-  port_stdev = np.sqrt(listWeights.T.dot(cov_matrix).dot(listWeights))
-
-  mean_investment = (1 + port_mean) * initial_investment
-
-  stdev_investment = initial_investment * port_stdev
-
-  conf_level1 = 0.05
-
-  cutoff1 = norm.ppf(conf_level1, mean_investment, stdev_investment)
-
-  VaR = initial_investment - cutoff1/initial_investment
-
-  return float((initial_investment - cutoff1)/initial_investment)
-
 def Volatility(ticker= '', startDate= '', endDate = '', day=0):
   values = getStockMarketData(ticker , startDate, endDate)['Close'].values
   df = pd.DataFrame.from_dict(values)
   returns = df.pct_change()
-  returns = returns.shift(1)
+  returns = returns.tail(returns.shape[0] -1)
   returns = returns.std()
   returns = returns*np.sqrt(day)
   return float(round(returns*100,2))
@@ -193,7 +166,8 @@ def Draw(ticker='', dateTimeStart = '', dateTimeEnd = ''):
                                 low= data['Low'],
                                 close= data['Close'], name= 'Price'))
   fig.add_trace(go.Bar(x = data['TradingDate'], y = data['Volume'], name ='Volume',marker={'color': data['color']}), secondary_y= True)
-  fig.update_layout(title={ 'text': 'Đồ thị của', 'x': 0.5})
+  title = "Biểu đồ chứng khoán của mã " + ticker + " từ ngày "+ dateTimeStart + " đến " + dateTimeEnd
+  fig.update_layout(title={ 'text': title, 'x': 0.5})
   fig.show()
 
 #allVar(95)
@@ -313,3 +287,14 @@ def calculateAllHNXVolality():
   df = df.reset_index(drop=True)
   df.to_csv('data/HNX_volality.csv')
 # calculateAllHNXVolality()
+
+def VolatilityChar(ticker= '', startDate= '', endDate = ''):
+  values = getStockMarketData(ticker , startDate, endDate)
+  df = pd.DataFrame.from_dict(values)
+  df['Volatility'] = df['Close'].pct_change()
+  df = df.tail(df.shape[0] -1)
+  plt.plot(df["TradingDate"],df['Volatility'])
+  plt.title('Volality '+ ticker)
+  plt.legend('Volatity')
+  plt.show()
+# VolatilityChar('ACB', '2021-01-01', '2022-02-02')

@@ -19,7 +19,7 @@ root.geometry("1200x720")
 
 
 tabControl.add(tab1, text='Biểu đồ biến động')
-tabControl.add(tab2, text="Bảng thông số")
+tabControl.add(tab2, text="Bảng chỉ số rủi ro")
 tabControl.add(tab3, text='Thước đo VaR')
 tabControl.add(tab4, text='Thước đo Volatility')
 tabControl.pack(expand=1, fill='both')
@@ -130,7 +130,7 @@ rbHSXTab1.place(x=400, y= 100)
 rbHNXTab1 = ttk.Radiobutton(tab2, text="Sàn HNX", width=20, variable= selectedtab2, value='HNX')
 rbHNXTab1.place(x=600, y= 100)
 
-treetab2 = ttk.Treeview(tab2, columns = ("","Value"), show = "headings", height = 10)
+treetab2 = ttk.Treeview(tab2, show = "headings", height = 10)
 treetab2.place(x=100,y=350)
 
 def viewtt():
@@ -144,12 +144,23 @@ def viewtt():
         status = False
         return
     if (status):
+        for item in treetab2.get_children():
+            treetab2.delete(item)
         path = 'data/'+ stock + '_' + market +'.csv'
         df = pd.read_csv(path)
-        print(df['Ticker'])
-        treetab2.insert('', END, values= df.values)
-        
-
+        data_col = list(df)
+        data_set = df.to_numpy().tolist()
+        print(data_set)
+        treetab2['columns']= data_col
+        for i in data_col:
+            treetab2.column(i, width=200, anchor="c")
+            treetab2.heading(i, text=i)
+        if sortBy == 'Tăng dần':
+            for data in data_set:
+                treetab2.insert('', END, values= data)
+        else:
+            for data in reversed(data_set):
+                treetab2.insert('', END, values= data)
 #btn tab1
 btnViewtt = Button(tab2,text='Xem thông số',foreground="blue",padx=5,command=viewtt).place(x = 100 , y = 250)
 
@@ -491,7 +502,35 @@ def searchVolatility():
         tree2.heading("#3",text="Volatility Year")
         tree2.insert('', END, values= values)
 
+def viewCharVolatility():
+    stockTickerVola = comboboxStockSearchTab4.get()
+    dateTimeStartTab3 = dateEntryStartTab3.get().replace("/","-")
+    dateTimeEndTab3 = dateEntryEndTab3.get().replace("/","-")
+
+    status= True
+    
+    if not stockTickerVola:
+        messagebox.showerror('Error','Vui lòng điền đầy đủ thông tin')
+        status = False
+        return
+    
+    if (dateTimeStartTab3 >= dateTimeEndTab3):
+        messagebox.showerror('Error','Ngày bắt đầu và kết thúc không hợp lệ')
+        status = False
+        return
+    
+    currentTime = dt.datetime.now().strftime("%Y-%m-%d")
+
+    if (currentTime <= dateTimeEndTab3):
+        messagebox.showerror('Error','Ngày kết thúc không hợp lệ')
+        status = False
+        return
+    if status:
+        VolatilityChar(stockTickerVola,dateTimeStartTab3,dateTimeEndTab3)
+
 #bn tab3
 btnSearchVola = Button(tab4,text='Tìm kiếm',foreground="blue",padx=5,command=searchVolatility).place(x = 100 , y = 300)
+btnViewChartVola = Button(tab4,text='Xem biểu đồ',foreground="blue",padx=5,command=viewCharVolatility).place(x = 250 , y = 300)
+
 
 mainloop()
