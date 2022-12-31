@@ -75,7 +75,7 @@ def viewChart():
     stockMarket = cbStockTab1.get()
 
     if not stockMarket:
-        messagebox.showerror('Error','Vui lòng điền thông tin mã index')
+        messagebox.showerror('Error','Vui lòng điền thông tin mã cổ phiếu')
         status = False
         return
     
@@ -169,22 +169,22 @@ btnViewtt = Button(tab2,text='Xem thông số',foreground="blue",padx=5,command=
 labelTitle3=Label(tab3,text="Hệ thống định lượng rủi ro thị trường chứng khoán Việt Nam",font = ("Quicksand", 17),foreground="black")
 labelTitle3.pack(side = "top")
 
-labelTickerStockA = Label(tab3,text="Mã Index A",font=("Quicksand",12))
+labelTickerStockA = Label(tab3,text="Mã cổ phiếu A",font=("Quicksand",12))
 labelTickerStockA.place(x = 40 , y = 100)
 comboboxStockA = ttk.Combobox(tab3,width=20)
 comboboxStockA.place(x = 170 , y =100)
 
-labelTickerStockB = Label(tab3,text="Mã Index B",font=("Quicksand",12))
+labelTickerStockB = Label(tab3,text="Mã cổ phiếu B",font=("Quicksand",12))
 labelTickerStockB.place(x = 40 , y = 140)
 comboboxStockB=ttk.Combobox(tab3,width=20)
 comboboxStockB.place(x = 170 , y =140)
 
-labelTickerStockC=Label(tab3,text="Mã Index C",font=("Quicksand",12))
+labelTickerStockC=Label(tab3,text="Mã cổ phiếu C",font=("Quicksand",12))
 labelTickerStockC.place(x = 40 , y = 180)
 comboboxStockC=ttk.Combobox(tab3,width=20)
 comboboxStockC.place(x = 170 , y =180)
 
-labelTickerStockD = Label(tab3,text="Mã Index D",font=("Quicksand",12))
+labelTickerStockD = Label(tab3,text="Mã cổ phiếu D",font=("Quicksand",12))
 labelTickerStockD.place(x = 40 , y = 220)
 comboboxStockD = ttk.Combobox(tab3,width=20)
 comboboxStockD.place(x = 170 , y =220)
@@ -215,6 +215,11 @@ labelDateStart=Label(tab3,text="Ngày bắt đầu",font=("Quicksand",12))
 labelDateStart.place(x = 750 , y = 100)
 dateEntryStart= DateEntry(tab3,width=20, date_pattern='y/mm/dd')
 dateEntryStart.place(x = 850 , y = 100)
+
+labelDateStartEnd=Label(tab3,text="Ngày kết thúc",font=("Quicksand",12))
+labelDateStartEnd.place(x = 750 , y = 140)
+dateEntryStart= DateEntry(tab3,width=20, date_pattern='y/mm/dd')
+dateEntryStart.place(x = 850 , y = 140)
 
 labelVaRTotal = Label(tab3, text="VaR95",font=("Quicksand",12))
 labelVaRTotal.place(x=40, y=330)
@@ -413,6 +418,9 @@ btnViewChart = Button(tab3,text='Biểu đồ biến động',foreground="blue",
 labelTitleTab4 =Label(tab4,text="Hệ thống định lượng rủi ro thị trường chứng khoán Việt Nam",font = ("Quicksand", 17),foreground="black")
 labelTitleTab4.pack(side = "top")
 
+lb_select_tab4 = Label(tab4,text="Vui lòng chọn sàn giao dịch",font=("Quicksand",12))
+lb_select_tab4.place(x = 100 , y = 100)
+
 def selectedFunc2(): 
     data2 = pd.DataFrame()
     if (selected3.get() == 'HNX'):
@@ -444,10 +452,10 @@ def selectedFunc3():
 selected3 = StringVar()
 
 radioExchangeHSXTab3 = ttk.Radiobutton(tab4, text="Sàn HSX", width=30,variable= selected3 ,value='HSX', command=selectedFunc3)
-radioExchangeHSXTab3.place(x=100, y= 50)
+radioExchangeHSXTab3.place(x=400, y= 100)
 
 radioExchangeHNXTab3 = ttk.Radiobutton(tab4, text="Sàn HNX", width=30, variable= selected3, value='HNX', command=selectedFunc3)
-radioExchangeHNXTab3.place(x=200, y= 50)
+radioExchangeHNXTab3.place(x=600, y= 100)
 
 labelStockMarket = Label(tab4, text="Mã Index",font=("Quicksand",12))
 labelStockMarket.place(x=100, y=150)

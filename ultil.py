@@ -291,6 +291,7 @@ def calculateAllHNXVolality():
 def VolatilityChar(ticker= '', startDate= '', endDate = ''):
   values = getStockMarketData(ticker , startDate, endDate)
   df = pd.DataFrame.from_dict(values)
+  print(df)
   df['Volatility'] = df['Close'].pct_change()
   df = df.tail(df.shape[0] -1)
   plt.plot(df["TradingDate"],df['Volatility'])
