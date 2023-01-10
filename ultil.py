@@ -15,14 +15,15 @@ alpha_99 = 0.01
 def getStockMarketData(symbol , startDate, endDate):
   return stock_historical_data(symbol= symbol, start_date = startDate, end_date = endDate)
 
+
 def get_stockmarket_data_realtime(symbol, startDate):
   endDate = dt.datetime.now().strftime("%Y-%m-%d")
   return stock_historical_data(symbol=symbol, start_date = startDate, end_date = endDate)
 
-def get_stockmarket_data_attribute(startDate, attribute, list = []):
+def get_stockmarket_data_attribute(startDate, endDate, attribute, list = []):
   result = {}
   for item in list :
-    data = get_stockmarket_data_realtime(symbol=item, startDate = startDate)[attribute].values
+    data = stock_historical_data(symbol=item, start_date = startDate, end_date = endDate)[attribute].values
     result[item]= data
   return result
 
@@ -44,7 +45,7 @@ def VaRHistorical( startDate='', alpha = 0.05, ticker =''):
   df['returns'] = df.pct_change()
   df = df.dropna()
   df.sort_values('returns', inplace = True, ascending =  True)
-  return round(df['returns'].quantile(alpha),3)
+  return round(df['returns'].quantile(alpha)*100,2)
 
 def CVaRHistorical(startDate='', alpha = 0.05, ticker =''):
   data_attribute_close = get_single_stockmarket_data_attribute(startDate, stock_ticker_close, ticker)
@@ -55,7 +56,7 @@ def CVaRHistorical(startDate='', alpha = 0.05, ticker =''):
   VaRResult = df['returns'].quantile(0.05)
   VaRSmall = df[df['returns'] < VaRResult]
   CVaR = VaRSmall['returns'].mean()
-  CVaR = round(CVaR,3)
+  CVaR = round(CVaR*100,2)
   return CVaR
 
 def drawCharVar(startDate='', ticker =''):
@@ -89,20 +90,22 @@ def viewChartVarDraw(stocks=[], startDate=''):
     listdata = get_stockmarket_data_realtime(symbol=item, startDate = startDate)
     df[item] = listdata['Close'].to_list()
   df.plot()
+  plt.ylabel('Close')
+  plt.title('Biểu đồ biến động giá của các cổ phiếu')
   plt.show()
 
-def VaRList(startDate = '', listTickers = [], listWeights = [], alpha = 0.05):
+def VaRList(startDate = '', endDate = '', listTickers = [], listWeights = [], alpha = 0.05):
   listWeights = np.array(listWeights)
   initial_investment = 1000000
-  data_attribute_close = get_stockmarket_data_attribute(startDate, stock_ticker_close, listTickers)
+  data_attribute_close = get_stockmarket_data_attribute(startDate, endDate, stock_ticker_close, listTickers)
   df = pd.DataFrame.from_dict(data_attribute_close)
   returns = df.pct_change()
   returns = returns.tail()
   cov_matrix = returns.cov()
 
-  avg_rets = returns.mean()
+  avg_rets = returns.mean() #gia dong cua trung binh cua moi co phieu
 
-  port_mean = avg_rets.dot(listWeights)
+  port_mean = avg_rets.dot(listWeights) #loi nhuan trung binh cua danh muc dau tu tong the
 
   port_stdev = np.sqrt(listWeights.T.dot(cov_matrix).dot(listWeights))
 
@@ -116,6 +119,8 @@ def VaRList(startDate = '', listTickers = [], listWeights = [], alpha = 0.05):
 
   var = (initial_investment - cutoff1)/initial_investment
 
+  var = var * 100
+
   var = round(var,2)
   return var
 
@@ -123,34 +128,9 @@ def Volatility(ticker= '', startDate= '', endDate = '', day=0):
   values = getStockMarketData(ticker , startDate, endDate)['Close'].values
   df = pd.DataFrame.from_dict(values)
   returns = df.pct_change()
-  returns = returns.tail(returns.shape[0] -1)
   returns = returns.std()
   returns = returns*np.sqrt(day)
   return float(round(returns*100,2))
-  
-
-
-def VolatilityYear():
-  stocks=[]
-  data3 = pd.read_csv('data/HNX.csv')
-  ticker = data3['Ticker'].tolist()
-  stocks.append(ticker)
-  endDate = dt.datetime.now() - dt.timedelta(days=3)
-  startDate = endDate - dt.timedelta(days = 365)
-  startDate = startDate.strftime("%Y-%m-%d")
-  for stock in stocks:
-    dataAttributeClose = {}
-    dataAttributeClose = get_stockmarket_data_attribute('2022-11-10', stock_ticker_close, stock)
-    print(dataAttributeClose)
-    # df = pd.DataFrame.from_dict(dataAttributeClose)
-    # returns = df.pct_change()
-    # returns.shift(1)
-    # returns = returns.std()
-    # returns = returns*np.sqrt(252)
-    # print(returns)
-  # return float(round(returns*100,2))
-
-# VolatilityYear()
 
 def Draw(ticker='', dateTimeStart = '', dateTimeEnd = ''):
   data = getStockMarketData(ticker, dateTimeStart, dateTimeEnd)

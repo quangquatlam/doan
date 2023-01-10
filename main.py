@@ -18,7 +18,7 @@ root.configure(bg='#FFB6C1')
 root.geometry("1200x720")
 
 
-tabControl.add(tab1, text='Biểu đồ biến động')
+tabControl.add(tab1, text='Biểu đồ phân tích kỹ thuật')
 tabControl.add(tab2, text="Bảng chỉ số rủi ro")
 tabControl.add(tab3, text='Thước đo VaR')
 tabControl.add(tab4, text='Thước đo Volatility')
@@ -54,7 +54,7 @@ rbHSXTab1.place(x=400, y= 100)
 rbHNXTab1 = ttk.Radiobutton(tab1, text="Sàn HNX", width=20, variable= selected1, value='HNX', command=selectedFuncTab1)
 rbHNXTab1.place(x=600, y= 100)
 
-labelSelectStockTab1 = Label(tab1,text="Mã Index",font=("Quicksand",12))
+labelSelectStockTab1 = Label(tab1,text="Mã Cổ Phiếu",font=("Quicksand",12))
 labelSelectStockTab1.place(x = 100 , y = 150)
 
 cbStockTab1 = ttk.Combobox(tab1,width=20)
@@ -216,18 +216,18 @@ labelDateStart.place(x = 750 , y = 100)
 dateEntryStart= DateEntry(tab3,width=20, date_pattern='y/mm/dd')
 dateEntryStart.place(x = 850 , y = 100)
 
-labelDateStartEnd=Label(tab3,text="Ngày kết thúc",font=("Quicksand",12))
-labelDateStartEnd.place(x = 750 , y = 140)
-dateEntryStart= DateEntry(tab3,width=20, date_pattern='y/mm/dd')
-dateEntryStart.place(x = 850 , y = 140)
+labelDateEnd=Label(tab3,text="Ngày kết thúc",font=("Quicksand",12))
+labelDateEnd.place(x = 750 , y = 140)
+dateEntryEnd= DateEntry(tab3,width=20, date_pattern='y/mm/dd')
+dateEntryEnd.place(x = 850 , y = 140)
 
-labelVaRTotal = Label(tab3, text="VaR95",font=("Quicksand",12))
+labelVaRTotal = Label(tab3, text="Phần trăm tổn thất với độ tin cậy 95% là:",font=("Quicksand",12))
 labelVaRTotal.place(x=40, y=330)
 
-labelVaRTotal = Label(tab3, text="VaR99",font=("Quicksand",12))
+labelVaRTotal = Label(tab3, text="Phần trăm tổn thất với độ tin cậy 99% là:",font=("Quicksand",12))
 labelVaRTotal.place(x=40, y=360)
 
-labelListMeasure = Label(tab3, text="Bảng giá trị",font=("Quicksand",12))
+labelListMeasure = Label(tab3, text="Bảng giá trị rủi ro",font=("Quicksand",12))
 labelListMeasure.place(x=40,y=400)
 
 comboboxStockSearch = ttk.Combobox(tab3,width=20)
@@ -290,6 +290,8 @@ def quantitative():
 
     dateTimeStart = dateEntryStart.get().replace("/","-")
 
+    dateTimeEnd = dateEntryEnd.get().replace("/","-")
+
     listWeight = []
 
     status = True
@@ -315,12 +317,17 @@ def quantitative():
         status = False
         return
 
-    if status:
-        labelVaRTotal95 = Label(tab3, text=VaRList(dateTimeStart, stocks, listWeight, 0.05),font=("Quicksand",12))
-        labelVaRTotal95.place(x=100, y=330)
+    if (currentTime <= dateTimeEnd):
+        messagebox.showerror('Error','Vui lòng điền đầy đủ thông tin ngày kết thúc')
+        status = False
+        return
 
-        labelVaRTotal99 = Label(tab3, text=VaRList(dateTimeStart, stocks, listWeight, 0.01),font=("Quicksand",12))
-        labelVaRTotal99.place(x=100, y=360)
+    if status:
+        labelVaRTotal95 = Label(tab3, text=str(VaRList(dateTimeStart, dateTimeEnd, stocks, listWeight, 0.05)) + "%",font=("Quicksand",12))
+        labelVaRTotal95.place(x=400, y=330)
+
+        labelVaRTotal99 = Label(tab3, text=str(VaRList(dateTimeStart, dateTimeEnd, stocks, listWeight, 0.01)) + "%",font=("Quicksand",12))
+        labelVaRTotal99.place(x=400, y=360)
 
         for item in tree.get_children():
             tree.delete(item)
@@ -329,10 +336,10 @@ def quantitative():
             stock = str(stock)
             values = []
             values.append(stock)
-            values.append(VaRHistorical(dateTimeStart, 0.05, stock))
-            values.append(VaRHistorical(dateTimeStart, 0.01, stock))
-            values.append(CVaRHistorical(dateTimeStart, 0.05, stock))
-            values.append(CVaRHistorical(dateTimeStart, 0.01, stock))
+            values.append(str(VaRHistorical(dateTimeStart, 0.05, stock)) + "%")
+            values.append(str(VaRHistorical(dateTimeStart, 0.01, stock)) + "%")
+            values.append(str(CVaRHistorical(dateTimeStart, 0.05, stock)) + "%")
+            values.append(str(CVaRHistorical(dateTimeStart, 0.01, stock)) + "%")
             values.append(dateTimeStart)
             tree.column("#2", anchor=CENTER)
             tree.heading("#2",text="VaR95")
@@ -370,10 +377,10 @@ def searchVaR():
 
         values = []
         values.append(stockTickerVaR)
-        values.append(VaRHistorical(dateTimeStart, 0.05, stockTickerVaR))
-        values.append(VaRHistorical(dateTimeStart, 0.01, stockTickerVaR))
-        values.append(CVaRHistorical(dateTimeStart, 0.05, stockTickerVaR))
-        values.append(CVaRHistorical(dateTimeStart, 0.01, stockTickerVaR))
+        values.append(str(VaRHistorical(dateTimeStart, 0.05, stockTickerVaR)) + "%")
+        values.append(str(VaRHistorical(dateTimeStart, 0.01, stockTickerVaR)) + "%")
+        values.append(str(CVaRHistorical(dateTimeStart, 0.05, stockTickerVaR)) + "%")
+        values.append(str(CVaRHistorical(dateTimeStart, 0.01, stockTickerVaR)) + "%")
         values.append(dateTimeStart)
         tree.column("#2", anchor=CENTER)
         tree.heading("#2",text="VaR95")
@@ -457,7 +464,7 @@ radioExchangeHSXTab3.place(x=400, y= 100)
 radioExchangeHNXTab3 = ttk.Radiobutton(tab4, text="Sàn HNX", width=30, variable= selected3, value='HNX', command=selectedFunc3)
 radioExchangeHNXTab3.place(x=600, y= 100)
 
-labelStockMarket = Label(tab4, text="Mã Index",font=("Quicksand",12))
+labelStockMarket = Label(tab4, text="Mã Cổ Phiếu",font=("Quicksand",12))
 labelStockMarket.place(x=100, y=150)
 
 comboboxStockSearchTab4 = ttk.Combobox(tab4,width=20)
