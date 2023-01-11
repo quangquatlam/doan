@@ -459,7 +459,7 @@ def selectedFunc3():
 selected3 = StringVar()
 
 radioExchangeHSXTab3 = ttk.Radiobutton(tab4, text="Sàn HSX", width=30,variable= selected3 ,value='HSX', command=selectedFunc3)
-radioExchangeHSXTab3.place(x=400, y= 100)
+radioExchangeHSXTab3.place(x=400, y= 100) 
 
 radioExchangeHNXTab3 = ttk.Radiobutton(tab4, text="Sàn HNX", width=30, variable= selected3, value='HNX', command=selectedFunc3)
 radioExchangeHNXTab3.place(x=600, y= 100)
@@ -468,7 +468,7 @@ labelStockMarket = Label(tab4, text="Mã Cổ Phiếu",font=("Quicksand",12))
 labelStockMarket.place(x=100, y=150)
 
 comboboxStockSearchTab4 = ttk.Combobox(tab4,width=20)
-comboboxStockSearchTab4.place(x = 250 , y =150)
+comboboxStockSearchTab4.place(x = 250 , y =150)                       
 
 labelDateStartTab3=Label(tab4,text="Từ ngày",font=("Quicksand",12))
 labelDateStartTab3.place(x = 100 , y = 200)
@@ -476,7 +476,7 @@ dateEntryStartTab3= DateEntry(tab4,width=20, date_pattern='y/mm/dd')
 dateEntryStartTab3.place(x = 250 , y = 200)
 
 labelDateEndTab3=Label(tab4,text="Đến ngày",font=("Quicksand",12))
-labelDateEndTab3.place(x = 100 , y = 250)
+labelDateEndTab3.place(x = 100 , y        = 250)
 dateEntryEndTab3= DateEntry(tab4,width=20, date_pattern='y/mm/dd')
 dateEntryEndTab3.place(x = 250 , y = 250)
 

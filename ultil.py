@@ -162,6 +162,8 @@ def calculateAllHNXVar95():
   df = df.reset_index(drop=True)
   df.to_csv('data/VaR95_HNX.csv')
 
+# calculateAllHNXVar95()
+
 def calculateAllHSXVar95():
   listData = pd.read_csv('data/HSX.csv')
   dic_varAll = {}
@@ -172,6 +174,8 @@ def calculateAllHSXVar95():
   df = df.sort_values(by=['VaR95'],ascending=False)
   df = df.reset_index(drop=True)
   df.to_csv('data/VaR95_HSX.csv')
+
+# calculateAllHSXVar95()
 
 #allVar(99)
 def calculateAllHNXVar99():
@@ -185,6 +189,8 @@ def calculateAllHNXVar99():
   df = df.reset_index(drop=True)
   df.to_csv('data/VaR99_HNX.csv')
 
+# calculateAllHNXVar99()
+
 def calculateAllHSXVar99():
   listData = pd.read_csv('data/HSX.csv')
   dic_varAll = {}
@@ -195,6 +201,8 @@ def calculateAllHSXVar99():
   df = df.sort_values(by=['VaR99'],ascending=False)
   df = df.reset_index(drop=True)
   df.to_csv('data/VaR99_HSX.csv')
+
+# calculateAllHSXVar99()
 
 #all CVaR(95):
 def calculateAllHNXCVar95():
@@ -208,6 +216,8 @@ def calculateAllHNXCVar95():
   df = df.reset_index(drop=True)
   df.to_csv('data/CVaR95_HNX.csv')
 
+# calculateAllHNXCVar95()
+
 def calculateAllHSXCVar95():
   listData = pd.read_csv('data/HSX.csv')
   dic_varAll = {}
@@ -218,6 +228,8 @@ def calculateAllHSXCVar95():
   df = df.sort_values(by=['CVaR95'],ascending=False)
   df = df.reset_index(drop=True)
   df.to_csv('data/CVaR95_HSX.csv')
+
+# calculateAllHSXCVar95()
 
 def calculateAllHNXCVar99():
   listData = pd.read_csv('data/HNX.csv')
@@ -230,6 +242,8 @@ def calculateAllHNXCVar99():
   df = df.reset_index(drop=True)
   df.to_csv('data/CVaR99_HNX.csv')
 
+# calculateAllHNXCVar99()
+
 def calculateAllHSXCVar99():
   listData = pd.read_csv('data/HSX.csv')
   dic_varAll = {}
@@ -240,6 +254,7 @@ def calculateAllHSXCVar99():
   df = df.sort_values(by=['CVaR99'],ascending=False)
   df = df.reset_index(drop=True)
   df.to_csv('data/CVaR99_HSX.csv')
+
 # calculateAllHSXCVar99()
 
 def calculateAllHSXVolality():
@@ -252,7 +267,8 @@ def calculateAllHSXVolality():
   df = pd.DataFrame(list(dic_varAll.items()), columns=['Ticker', 'Volality'])
   df = df.sort_values(by=['Volality'],ascending=False)
   df = df.reset_index(drop=True)
-  df.to_csv('data/HSX_volality.csv')
+  df.to_csv('data/volality_HSX.csv')
+
 # calculateAllHSXVolality()
 
 def calculateAllHNXVolality():
@@ -265,13 +281,12 @@ def calculateAllHNXVolality():
   df = pd.DataFrame(list(dic_varAll.items()), columns=['Ticker', 'Volality'])
   df = df.sort_values(by=['Volality'],ascending=False)
   df = df.reset_index(drop=True)
-  df.to_csv('data/HNX_volality.csv')
+  df.to_csv('data/volality_HNX.csv')
 # calculateAllHNXVolality()
 
 def VolatilityChar(ticker= '', startDate= '', endDate = ''):
   values = getStockMarketData(ticker , startDate, endDate)
   df = pd.DataFrame.from_dict(values)
-  print(df)
   df['Volatility'] = df['Close'].pct_change()
   df = df.tail(df.shape[0] -1)
   plt.plot(df["TradingDate"],df['Volatility'])
